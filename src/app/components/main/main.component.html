@@ -1,0 +1,157 @@
+<div class="container pt-2">
+    <div class="row">
+        <div class="col-12">
+            <h2>Regole</h2>
+            <div class="row">
+                <div class="col-6">
+                    <input type="file" class="form-control" (change)="onRulesFileChange($event)">
+                </div>
+                <div class="col-5 ml-3">
+                    <div class="row">
+                        <button (click)="confirmRules()" class="btn btn-primary">Conferma regole</button>
+                        <span *ngIf="areRulesConfirmed" class="ml-2">
+                            <button class="btn btn-success"  data-toggle="modal" data-target="#rulesModal">Show rules</button>
+                        </span>
+                        <span *ngIf="!areRulesConfirmed" class="ml-2 text-danger">
+                            Inserire un file di regole valido
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-3">
+            <h2>Utenti</h2>
+            <div class="row">
+                <div class="col-6">
+                    <input type="file" class="form-control" (change)="onUtentiFileChange($event)">
+                </div>
+                <div class="col-5 ml-3">
+                    <div class="row">
+                        <button (click)="confirmUsers()" class="btn btn-primary">Conferma utenti</button>
+                        <span *ngIf="areUsersConfirmed" class="ml-2">
+                            <button class="btn btn-success" data-toggle="modal" data-target="#utentiModal">Show users</button>
+                        </span>
+                        <span *ngIf="!areUsersConfirmed" class="ml-2 text-danger">
+                            Inserire un file di utenti valido
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-5">
+            <div class="row text-right">
+                <h1 class="text-right">
+                    Match tabelle
+                </h1>
+            </div>
+            <div class="row" *ngIf="areUsersConfirmed && areRulesConfirmed">
+                <button class="btn btn-primary" (click)="generateFinalOutput()">Genera output</button>
+                <button *ngIf="outputIsReady" class="btn btn-dark ml-2" (click)="export()">export</button>
+            </div>
+            <div class="row" *ngIf="!areUsersConfirmed || !areRulesConfirmed">
+                Inserire 2 file validi
+            </div>
+            <div class="row" *ngIf="outputIsReady">
+                <table class="table table-hover" id="export-table">
+                    <thead>
+                        <tr>
+                            <th>Utente</th>
+                            <th>Nome</th>
+                            <th>Cognome</th>
+                            <th>Organizzazione</th>
+                            <th>Codice prodotto</th>
+                            <th>Nome prodotto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let f of finalOutputArray">
+                            <td>{{f.utente}}</td>
+                            <td>{{f.nome}}</td>
+                            <td>{{f.cognome}}</td>
+                            <td>{{f.organizzazione}}</td>
+                            <td>{{f.prodotto}}</td>
+                            <td>{{f.dettaglio}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rulesModal" tabindex="-1" role="dialog" aria-labelledby="rulesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rulesModalLabel">Regole inserite</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="areRulesConfirmed" class="col-12">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Corso</th>
+                                <th>Prodotto</th>
+                                <th>Dettaglio</th>
+                                <th>Corsi combinati</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let r of confirmedRules">
+                                <td>{{r.corso}}</td>
+                                <td>{{r.prodotto}}</td>
+                                <td>{{r.dettaglio}}</td>
+                                <td>{{r.numeroCorsi}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="utentiModal" tabindex="-1" role="dialog" aria-labelledby="utentiModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="utentiModalLabel">Utenti inseriti</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="areUsersConfirmed" class="col-12">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Utente</th>
+                                <th>Nome</th>
+                                <th>Cognome</th>
+                                <th>Organizzazione</th>
+                                <th>Corso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let u of confirmedUsers">
+                                <td>{{u.utente}}</td>
+                                <td>{{u.nome}}</td>
+                                <td>{{u.cognome}}</td>
+                                <td>{{u.organizzazione}}</td>
+                                <td>{{u.idCorso}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
